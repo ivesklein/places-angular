@@ -16,9 +16,12 @@ export class MapComponent implements AfterViewInit {
   private map!: L.Map | L.LayerGroup<any>;
 
   places:place[] = []
+  markers:L.Marker<any>[] = []
+
   placesService = inject(PlacesApiService)
 
   private initMap(): void {
+    console.log("Map initMap")
     this.map = L.map('map', {
       center: [ -33.45894275368763, -70.46749229476947 ],
       zoom: 8
@@ -60,19 +63,45 @@ export class MapComponent implements AfterViewInit {
 
     tiles.addTo(this.map);
 
-    /** add points */
-    this.places.forEach(place => {
-      let marker = L.marker([place.lat, place.lon]).addTo(theMap);
-    });
+
     
+    this.updateMap()
 
   }
 
   constructor() {
+    console.log("Map constructor")
     this.places = this.placesService.getAll()
+
+
+    this.placesService.changes.subscribe(() => this.updateMap() );
+  
+
+
+  }
+
+  updateMap(){
+    //clear markers
+    for(const index in this.markers){
+      this.map.removeLayer(this.markers[index]);
+    }
+
+    /** add points */
+    this.places.forEach(place => {
+      let marker = L.marker([place.lat, place.lon]).addTo(this.map);
+      this.markers.push(marker)
+    });
+
   }
 
   ngAfterViewInit(): void {
+    console.log("Map ngAfterViewInit")
     this.initMap();
   }
+
+  ngOnChanges(){
+    console.log("Map ngOnChanges")
+  }
+
+
 }

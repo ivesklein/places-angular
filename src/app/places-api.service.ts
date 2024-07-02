@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 
 export interface place{
   id: String
@@ -12,6 +12,8 @@ export interface place{
   providedIn: 'root'
 })
 export class PlacesApiService {
+
+  changes = new EventEmitter();
 
   places:place[] = [
     {
@@ -42,4 +44,13 @@ export class PlacesApiService {
   getAll() : place[]{
     return this.places;
   }
+
+
+  delete(id: String) {
+    /** thanks https://stackoverflow.com/a/45995630/2524558 for the copy/paste */
+    let index = this.places.findIndex(d => d.id === id); //find index in your array
+    this.places.splice(index, 1);//remove element from array
+    this.changes.emit();
+  }
+
 }

@@ -17,6 +17,16 @@ export class TableComponent {
   placesService = inject(PlacesApiService)
 
   constructor(){
+    console.log("Table constructor")
     this.places = this.placesService.getAll()
   }
+
+  onDelete(id: String) {
+    this.placesService.delete(id)
+  }
+
+  ngOnChanges(){
+    console.log("Table ngOnChanges")
+  }
+
 }
