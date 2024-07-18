@@ -4,9 +4,14 @@
             <div id="map">
                 <div id='crosshair'>+</div>
                 <div class="btn-group" style="z-index: 1001"> <!-- Use 401 to be between map and controls -->
-                    <button class="btn btn-light rounded-circle p-2 lh-1" type="button">
+                    <button *ngIf="status==Status.default" (click)="_onAdd()" class="btn btn-light rounded-circle p-2 lh-1" type="button">
                         <ng-icon name="bootstrapPlus" size="24" style="display:block;"></ng-icon>
                     </button>
+
+                    <button *ngIf="status==Status.addPoint" (click)="_onSave()" class="btn btn-primary rounded-circle p-2 lh-1" type="button">
+                        <ng-icon name="bootstrapFloppy2Fill" size="24" style="display:block;"></ng-icon>
+                    </button>
+
                 </div>
             </div>
         </div>

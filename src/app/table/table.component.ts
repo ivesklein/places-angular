@@ -24,9 +24,4 @@ export class TableComponent {
   onDelete(id: String) {
     this.placesService.delete(id)
   }
-
-  ngOnChanges(){
-    console.log("Table ngOnChanges")
-  }
-
 }

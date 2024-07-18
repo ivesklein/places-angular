@@ -1,19 +1,64 @@
-import { Component, AfterViewInit, inject } from '@angular/core';
-import { bootstrapPlus } from '@ng-icons/bootstrap-icons';
+import { Component, AfterViewInit, inject, Output, EventEmitter, Input } from '@angular/core';
+import { bootstrapFloppy2Fill, bootstrapPlus, bootstrapSave, bootstrapSave2 } from '@ng-icons/bootstrap-icons';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import * as L from 'leaflet';
 import { PlacesApiService, place } from '../places-api.service';
+import { NgIf } from '@angular/common';
+
+enum MapStatus{
+  default,
+  addPoint,
+}
 
 @Component({
   selector: 'MyMap',
   standalone: true,
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css'],
-  imports: [NgIconComponent],
-  providers: [provideIcons({ bootstrapPlus })],
+  imports: [NgIconComponent, NgIf],
+  providers: [provideIcons({ bootstrapPlus, bootstrapFloppy2Fill })],
 })
 export class MapComponent implements AfterViewInit {
   private map!: L.Map | L.LayerGroup<any>;
+
+  @Output() onAdd = new EventEmitter();
+  @Output() onSave = new EventEmitter();
+
+  @Input()
+  set reset(resetN: number) {
+    if(resetN>0){
+      if(this.newPoint!==undefined){
+        this.map.removeLayer(this.newPoint);
+      }
+      this.status = MapStatus.default;
+      console.log("reset")
+    }
+  }
+
+  Status = MapStatus;
+  status:MapStatus = MapStatus.default;
+  nstatus = 0;
+
+  newPoint!:L.Marker<any>;
+
+  _onAdd(){
+    console.log("map onAdd");
+    this.status = MapStatus.addPoint;
+    this.nstatus = 1;
+    /* @ts-ignore:next-line */
+    const center1 = this.map.getBounds();//{ lat:-33.45894275368763, lon:-70.46749229476947 }
+    const center = center1.getCenter();//{ lat:-33.45894275368763, lon:-70.46749229476947 }
+    if(this.newPoint!==undefined){
+      this.map.removeLayer(this.newPoint);
+    }
+    this.newPoint = L.marker([center.lat, center.lng]).addTo(this.map);
+    this.onAdd.emit();
+  }
+
+  _onSave(){
+    console.log("map onSave");
+    this.onSave.emit();
+  }
 
   places:place[] = []
   markers:L.Marker<any>[] = []
@@ -59,6 +104,15 @@ export class MapComponent implements AfterViewInit {
       crosshair.setLatLng(theMap.getCenter());
     });*/
 
+    this.map.on('move', (e) => {
+      if(this.status == MapStatus.addPoint){
+        const center = theMap.getCenter();
+        this.newPoint.setLatLng(center);
+      }
+    });
+
+    
+
     const theMap = this.map;
 
     tiles.addTo(this.map);
@@ -72,12 +126,8 @@ export class MapComponent implements AfterViewInit {
   constructor() {
     console.log("Map constructor")
     this.places = this.placesService.getAll()
-
-
     this.placesService.changes.subscribe(() => this.updateMap() );
   
-
-
   }
 
   updateMap(){
