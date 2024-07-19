@@ -17,21 +17,21 @@ export class PlacesApiService {
 
   places:place[] = [
     {
-      id: "String1",
+      id: "id1",
       name:"String1",
       description:"String",
       lat: -33.51874968922604, 
       lon: -70.70455134443426
     },
     {
-      id: "String2",
+      id: "id2",
       name:"String2",
       description:"String",
       lat: -33.37938681337916,
       lon: -70.78973265694923
     },
     {
-      id: "String3",
+      id: "id3",
       name:"String3",
       description:"String",
       lat: -33.44658967966243,
@@ -40,6 +40,17 @@ export class PlacesApiService {
   ]
 
   constructor() { }
+
+  add(name:string,description:string,lat:number, lon:number){
+    this.places.push({
+      id: name+lat+lon,
+      name: name,
+      description: description,
+      lat: lat,
+      lon: lon,
+    });
+    this.changes.emit();
+  }
 
   getAll() : place[]{
     return this.places;

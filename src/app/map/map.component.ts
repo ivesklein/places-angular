@@ -22,7 +22,7 @@ export class MapComponent implements AfterViewInit {
   private map!: L.Map | L.LayerGroup<any>;
 
   @Output() onAdd = new EventEmitter();
-  @Output() onSave = new EventEmitter();
+  @Output() onSave = new EventEmitter<Array<number>>();
 
   @Input()
   set reset(resetN: number) {
@@ -51,19 +51,42 @@ export class MapComponent implements AfterViewInit {
     if(this.newPoint!==undefined){
       this.map.removeLayer(this.newPoint);
     }
-    this.newPoint = L.marker([center.lat, center.lng]).addTo(this.map);
+    this.newPoint = L.marker([center.lat, center.lng], {icon: this.addMarker}).addTo(this.map);
     this.onAdd.emit();
   }
 
   _onSave(){
     console.log("map onSave");
-    this.onSave.emit();
+    const latlog = this.newPoint.getLatLng();
+    this.onSave.emit([latlog.lat, latlog.lng]);
   }
 
   places:place[] = []
   markers:L.Marker<any>[] = []
 
   placesService = inject(PlacesApiService)
+
+  blueMarker = L.icon({
+    iconUrl: 'blue.png',
+    shadowUrl: 'shadow.png',
+
+    iconSize:     [38, 63], // size of the icon
+    shadowSize:   [79, 48], // size of the shadow
+    iconAnchor:   [18, 62], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 43],  // the same for the shadow
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+  });
+
+  addMarker = L.icon({
+    iconUrl: 'add.png',
+    shadowUrl: 'shadow.png',
+
+    iconSize:     [38, 63], // size of the icon
+    shadowSize:   [79, 48], // size of the shadow
+    iconAnchor:   [18, 62], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 43],  // the same for the shadow
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+  });
 
   private initMap(): void {
     console.log("Map initMap")
@@ -77,6 +100,13 @@ export class MapComponent implements AfterViewInit {
       maxZoom: 17,
       attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
     });
+
+
+
+
+
+
+
 
     /*const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
@@ -138,7 +168,7 @@ export class MapComponent implements AfterViewInit {
 
     /** add points */
     this.places.forEach(place => {
-      let marker = L.marker([place.lat, place.lon]).addTo(this.map);
+      let marker = L.marker([place.lat, place.lon], {icon: this.blueMarker}).addTo(this.map);
       this.markers.push(marker)
     });
 

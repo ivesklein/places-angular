@@ -2,11 +2,11 @@
       <h3 class="mt-5 mb-1">Places</h3>
       <div class="row">
       <div class="col-8">
-        <MyMap [reset]="resetStatus" (onAdd)="onAdd()" (onSave)="onSave()"></MyMap>
+        <MyMap [reset]="resetStatus" (onAdd)="onAdd()" (onSave)="onSave($event)"></MyMap>
       </div>
       <div class="col-4">
         <app-table></app-table>
       </div>
     </div>
 </div>
-<app-popup [open]="openModal" (onClose)="onCloseModal()" (onSave)="onSaveModal()"></app-popup>
+<app-popup [open]="openModal" (onClose)="onCloseModal()" (onSave)="onSaveModal($event)"></app-popup>

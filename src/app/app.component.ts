@@ -1,8 +1,9 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MapComponent } from './map/map.component';
 import { TableComponent } from "./table/table.component";
 import { PopupComponent } from './popup/popup.component';
+import { PlacesApiService } from './places-api.service';
 
 @Component({
     selector: 'app-root',
@@ -12,20 +13,30 @@ import { PopupComponent } from './popup/popup.component';
     imports: [RouterOutlet, MapComponent, TableComponent, PopupComponent]
 })
 export class AppComponent {
+  
+  placesService = inject(PlacesApiService)
+  
   title = 'Places';
   openModal = 0;
   resetStatus = 0;
+
+  lat = 0;
+  lon = 0;
 
   onAdd = function(){
     console.log("onAdd")
   }
 
-  onSave = () => {
+  onSave = ([lat, lon]:Array<number>) => {
+    this.lat = lat;
+    this.lon = lon;
     this.openModal++;
     console.log("onSave")
   }
 
-  onSaveModal() {
+  onSaveModal([name, desc]:Array<string>) {
+    console.log("onSaveModal", [name, desc])
+    this.placesService.add(name, desc, this.lat, this.lon);
     this.resetStatus++;
   }
 
