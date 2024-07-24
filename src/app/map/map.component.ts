@@ -23,6 +23,7 @@ export class MapComponent implements AfterViewInit {
 
   @Output() onAdd = new EventEmitter();
   @Output() onSave = new EventEmitter<Array<number>>();
+  @Output() onSelect = new EventEmitter<string>();
 
   @Input()
   set reset(resetN: number) {
@@ -155,12 +156,20 @@ export class MapComponent implements AfterViewInit {
 
   constructor() {
     console.log("Map constructor")
-    this.places = this.placesService.getAll()
     this.placesService.changes.subscribe(() => this.updateMap() );
-  
+    
+    (async () => {this.places = await this.placesService.getAll()})();
+
+  }
+
+  _onClick = (e:any) => {
+    const id = e.target.options.title;
+    console.log(id, this);
+    //this.onSelect.emit(id);
   }
 
   updateMap(){
+    console.log("updateMap", this.markers)
     //clear markers
     for(const index in this.markers){
       this.map.removeLayer(this.markers[index]);
@@ -168,7 +177,7 @@ export class MapComponent implements AfterViewInit {
 
     /** add points */
     this.places.forEach(place => {
-      let marker = L.marker([place.lat, place.lon], {icon: this.blueMarker}).addTo(this.map);
+      let marker = L.marker([place.lat, place.lon], {icon: this.blueMarker, title: place.id}).addTo(this.map).on('click', this._onClick);
       this.markers.push(marker)
     });
 

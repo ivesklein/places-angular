@@ -44,5 +44,10 @@ export class AppComponent {
     this.resetStatus++;
   }
 
+  onSelect(id: string) {
+    this.openModal++;
+    
+  }
+
 
 }

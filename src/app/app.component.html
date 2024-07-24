@@ -2,7 +2,7 @@
       <h3 class="mt-5 mb-1">Places</h3>
       <div class="row">
       <div class="col-8">
-        <MyMap [reset]="resetStatus" (onAdd)="onAdd()" (onSave)="onSave($event)"></MyMap>
+        <MyMap [reset]="resetStatus" (onAdd)="onAdd()" (onSave)="onSave($event)" (onSelect)="onSelect($event)"></MyMap>
       </div>
       <div class="col-4">
         <app-table></app-table>

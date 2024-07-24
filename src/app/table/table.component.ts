@@ -17,8 +17,8 @@ export class TableComponent {
   placesService = inject(PlacesApiService)
 
   constructor(){
-    console.log("Table constructor")
-    this.places = this.placesService.getAll()
+    console.log("Table constructor");
+    (async () => {this.places = await this.placesService.getAll()})();
   }
 
   onDelete(id: String) {
