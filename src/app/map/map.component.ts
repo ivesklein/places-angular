@@ -158,7 +158,10 @@ export class MapComponent implements AfterViewInit {
     console.log("Map constructor")
     this.placesService.changes.subscribe(() => this.updateMap() );
     
-    (async () => {this.places = await this.placesService.getAll()})();
+    (async () => {
+      this.places = await this.placesService.getAll()
+      this.updateMap();
+    })();
 
   }
 

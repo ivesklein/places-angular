@@ -93,10 +93,12 @@ export class PlacesApiService {
 
   delete = createThrottledFunction(this._delete);
   _delete(id: String) {
-    /** thanks https://stackoverflow.com/a/45995630/2524558 for the copy/paste */
-    let index = this.localPlaces.findIndex(d => d.id === id); //find index in your array
-    this.localPlaces.splice(index, 1);//remove element from array
-    this.changes.emit();
+    const query = this.http.delete<place[]>(this.apiUrl+"/"+id).subscribe(data => {
+      /** thanks https://stackoverflow.com/a/45995630/2524558 for the copy/paste */
+      let index = this.localPlaces.findIndex(d => d.id === id); //find index in your array
+      this.localPlaces.splice(index, 1);//remove element from array
+      this.changes.emit();
+    });
   }
 
 }
